@@ -19,7 +19,7 @@ export default function CameraCapture({ setOriginal, setResult, setLoading }) {
     formData.append("file", blob, "capture.jpg");
 
     const res = await axios.post(
-      "http://192.168.1.6:8000/process",
+      "https://dehaze-api.onrender.com/process",
       formData
     );
 

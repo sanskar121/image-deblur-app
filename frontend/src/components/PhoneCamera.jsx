@@ -48,7 +48,7 @@ export default function PhoneCamera() {
     formData.append("file", blob, "capture.jpg");
 
     await axios.post(
-      "http://192.168.1.6:8000/process",
+      "https://dehaze-api.onrender.com/process",
       formData
     );
 
