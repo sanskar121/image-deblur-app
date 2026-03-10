@@ -1,74 +1,90 @@
-import { useState } from "react";
-
-import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
-import UploadBox from "../components/UploadBox";
-import CameraCapture from "../components/CameraCapture";
-import QRScanner from "../components/QRScanner";
-import Comparison from "../components/Comparison";
-import Loader from "../components/Loader";
-import Footer from "../components/Footer";
+import { useEffect, useState } from "react"
 
 export default function Home() {
 
-  const [original, setOriginal] = useState(null);
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [original, setOriginal] = useState(null)
+  const [enhanced, setEnhanced] = useState(null)
 
-  const removeImage = () => {
-    setOriginal(null);
-    setResult(null);
-  };
+  useEffect(() => {
+
+    const interval = setInterval(() => {
+
+      fetch("https://image-deblur-app.onrender.com/original")
+        .then(res => {
+          if(res.headers.get("content-type") === "image/jpeg"){
+            return res.blob()
+          }
+        })
+        .then(blob => {
+          if(blob){
+            const url = URL.createObjectURL(blob)
+            setOriginal(url)
+          }
+        })
+
+      fetch("https://image-deblur-app.onrender.com/latest")
+        .then(res => {
+          if(res.headers.get("content-type") === "image/jpeg"){
+            return res.blob()
+          }
+        })
+        .then(blob => {
+          if(blob){
+            const url = URL.createObjectURL(blob)
+            setEnhanced(url)
+          }
+        })
+
+    }, 3000)
+
+    return () => clearInterval(interval)
+
+  }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#020617] to-[#0f172a] text-white">
 
-      {/* Navbar */}
-      <Navbar />
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-10">
 
-      <div className="max-w-6xl mx-auto px-6">
+      <h1 className="text-4xl font-bold mb-6">
+        AI Image Dehazing
+      </h1>
 
-        {/* Hero Section */}
-        <Hero />
+      <p className="text-gray-400 mb-10">
+        Capture image from phone and view results here
+      </p>
 
-        {/* Main Card */}
-        <div className="mt-16 bg-[#020617] border border-gray-800 rounded-3xl p-10 shadow-2xl">
+      <div className="grid md:grid-cols-2 gap-10 w-full max-w-5xl">
 
-          {/* Upload Image */}
-          <UploadBox
-            setOriginal={setOriginal}
-            setResult={setResult}
-            setLoading={setLoading}
-          />
+        <div className="bg-gray-800 rounded-xl p-4">
+          <h2 className="text-xl mb-3">Original</h2>
 
-          {/* Laptop Camera */}
-          <CameraCapture
-            setOriginal={setOriginal}
-            setResult={setResult}
-            setLoading={setLoading}
-          />
+          {original ? (
+            <img
+              src={original}
+              className="rounded-lg w-full"
+            />
+          ) : (
+            <p className="text-gray-500">Waiting for image...</p>
+          )}
 
-          {/* QR Code for Phone Camera */}
-          <QRScanner />
+        </div>
 
-          {/* Loading Animation */}
-          {loading && <Loader />}
+        <div className="bg-gray-800 rounded-xl p-4">
+          <h2 className="text-xl mb-3">Enhanced</h2>
 
-          {/* Image Comparison */}
-          <Comparison
-            original={original}
-            result={result}
-            removeImage={removeImage}
-          />
+          {enhanced ? (
+            <img
+              src={enhanced}
+              className="rounded-lg w-full"
+            />
+          ) : (
+            <p className="text-gray-500">Processing...</p>
+          )}
 
         </div>
 
       </div>
 
-      {/* Footer */}
-      <Footer />
-
     </div>
-  );
+  )
 }
-
