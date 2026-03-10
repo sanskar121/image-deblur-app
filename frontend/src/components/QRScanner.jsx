@@ -2,7 +2,7 @@ import { QRCodeCanvas } from "qrcode.react"
 
 export default function QRScanner(){
 
-const phoneURL = "http://192.168.1.6:5173/phone"
+const phoneURL = "https://image-deblur-app-1.onrender.com/phone"
 
 return(
 

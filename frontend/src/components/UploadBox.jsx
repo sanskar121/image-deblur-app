@@ -15,7 +15,7 @@ formData.append("file",file)
 setLoading(true)
 
 const res = await axios.post(
-"https://dehaze-api.onrender.com/process",
+"https://image-deblur-app.onrender.com/process",
 formData
 )
 
