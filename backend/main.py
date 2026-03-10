@@ -4,6 +4,7 @@ import numpy as np
 from dehaze import enhance_image
 from fastapi.middleware.cors import CORSMiddleware
 import base64
+import uvicorn
 
 app = FastAPI()
 
@@ -29,3 +30,7 @@ async def process_image(file: UploadFile = File(...)):
     encoded = base64.b64encode(buffer).decode()
 
     return {"image": f"data:image/png;base64,{encoded}"}
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=10000)
