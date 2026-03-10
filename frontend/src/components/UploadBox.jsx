@@ -1,81 +1,146 @@
 import { useState } from "react"
 import axios from "axios"
 
-export default function UploadBox() {
+export default function UploadBox(){
 
-  const [original, setOriginal] = useState(null)
-  const [enhanced, setEnhanced] = useState(null)
-  const [loading, setLoading] = useState(false)
+const [original,setOriginal] = useState(null)
+const [enhanced,setEnhanced] = useState(null)
+const [loading,setLoading] = useState(false)
 
-  const handleUpload = async (e) => {
+const handleUpload = async (e)=>{
 
-    const file = e.target.files[0]
-    if(!file) return
+const file = e.target.files[0]
 
-    setOriginal(URL.createObjectURL(file))
+if(!file) return
 
-    const formData = new FormData()
-    formData.append("file", file)
+// show preview
+setOriginal(URL.createObjectURL(file))
 
-    setLoading(true)
+const formData = new FormData()
+formData.append("file",file)
 
-    const res = await axios.post(
-      "https://image-deblur-app.onrender.com/process",
-      formData,
-      { responseType: "blob" }
-    )
+setLoading(true)
 
-    const imageURL = URL.createObjectURL(res.data)
-    setEnhanced(imageURL)
+try{
 
-    setLoading(false)
+const res = await axios.post(
+"https://image-deblur-app.onrender.com/process",
+formData,
+{
+responseType:"blob"
+}
+)
 
-  }
+const enhancedURL = URL.createObjectURL(res.data)
 
-  return (
+setEnhanced(enhancedURL)
 
-    <div className="flex flex-col items-center gap-6">
+}catch(error){
 
-      <div className="border-2 border-dashed border-gray-600 rounded-xl p-10 text-center w-[400px]">
+console.error("Upload failed:",error)
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleUpload}
-        />
+}
 
-        <p className="text-gray-400 mt-4">
-          Upload your hazy image
-        </p>
+setLoading(false)
 
-      </div>
+}
 
-      <div className="grid grid-cols-2 gap-6">
+return(
 
-        <div className="bg-gray-800 p-4 rounded-xl">
+<div className="flex flex-col items-center gap-10">
 
-          <h3 className="mb-3">Original</h3>
+{/* Upload Box */}
 
-          {original && (
-            <img src={original} className="rounded-lg"/>
-          )}
+<div className="border-2 border-dashed border-gray-600 rounded-xl p-10 text-center w-[420px]">
 
-        </div>
+<input
+type="file"
+accept="image/*"
+onChange={handleUpload}
+/>
 
-        <div className="bg-gray-800 p-4 rounded-xl">
+<p className="text-gray-400 mt-4">
+Upload your hazy image
+</p>
 
-          <h3 className="mb-3">Enhanced</h3>
+</div>
 
-          {loading && <p>Processing...</p>}
 
-          {enhanced && (
-            <img src={enhanced} className="rounded-lg"/>
-          )}
+{/* Results */}
 
-        </div>
+<div className="grid md:grid-cols-2 gap-10 w-full max-w-5xl">
 
-      </div>
+{/* Original */}
 
-    </div>
-  )
+<div className="bg-gray-800 rounded-xl p-4">
+
+<h2 className="text-xl mb-3">
+Original
+</h2>
+
+{original ? (
+
+<img
+src={original}
+className="rounded-lg w-full"
+/>
+
+):(
+
+<p className="text-gray-500">
+Upload image to preview
+</p>
+
+)}
+
+</div>
+
+
+{/* Enhanced */}
+
+<div className="bg-gray-800 rounded-xl p-4">
+
+<h2 className="text-xl mb-3">
+Enhanced
+</h2>
+
+{loading && (
+
+<p className="text-gray-400">
+Enhancing image...
+</p>
+
+)}
+
+{enhanced && (
+
+<div className="flex flex-col gap-4">
+
+<img
+src={enhanced}
+className="rounded-lg w-full"
+/>
+
+<a
+href={enhanced}
+download="enhanced-image.jpg"
+className="bg-green-500 hover:bg-green-600 text-center py-2 rounded-lg font-semibold transition"
+>
+
+Download Enhanced Image
+
+</a>
+
+</div>
+
+)}
+
+</div>
+
+</div>
+
+</div>
+
+)
+
 }

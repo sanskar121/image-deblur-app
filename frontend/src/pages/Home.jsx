@@ -239,12 +239,27 @@ export default function Home() {
             <h2 className="text-xl mb-3">Enhanced</h2>
 
             {enhanced ? (
-              <img src={enhanced} className="rounded-lg w-full"/>
-            ) : (
-              <p className="text-gray-500">
-                Processing...
-              </p>
-            )}
+  <div className="flex flex-col gap-4">
+
+    <img
+      src={enhanced}
+      className="rounded-lg w-full"
+    />
+
+    <a
+      href={enhanced}
+      download="enhanced-image.jpg"
+      className="bg-green-500 hover:bg-green-600 text-center py-2 rounded-lg font-semibold transition"
+    >
+      Download Enhanced Image
+    </a>
+
+  </div>
+) : (
+  <p className="text-gray-500">
+    Processing...
+  </p>
+)}
 
           </div>
 
