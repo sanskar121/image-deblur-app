@@ -9,6 +9,7 @@ export default function Home() {
   const [original, setOriginal] = useState(null)
   const [enhanced, setEnhanced] = useState(null)
 
+  // Poll backend when using phone mode
   useEffect(() => {
 
     if(mode !== "phone") return
@@ -41,47 +42,99 @@ export default function Home() {
 
     },3000)
 
-    return ()=>clearInterval(interval)
+    return () => clearInterval(interval)
 
   },[mode])
 
 
 
-  /* HOME SCREEN */
+  /* ---------------- LANDING PAGE ---------------- */
 
   if(mode === "home"){
 
     return(
 
-      <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center gap-6">
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex flex-col items-center justify-center px-6">
 
-        <h1 className="text-4xl font-bold">
+        <h1 className="text-5xl font-bold mb-4 text-center">
           AI Image Dehazing
         </h1>
 
-        <p className="text-gray-400">
-          Choose how you want to upload image
+        <p className="text-gray-400 text-lg text-center max-w-xl mb-10">
+          Remove haze, fog and low contrast from images instantly using
+          AI powered enhancement. Upload images or capture directly
+          from your camera.
         </p>
 
-        <div className="flex flex-col gap-4 mt-6">
+
+        {/* BUTTON OPTIONS */}
+
+        <div className="flex flex-col gap-4 w-[320px]">
 
           <button
           onClick={()=>setMode("upload")}
-          className="bg-blue-500 px-6 py-3 rounded-xl">
+          className="bg-blue-500 hover:bg-blue-600 py-3 rounded-xl font-semibold transition">
             Upload Image
           </button>
 
           <button
           onClick={()=>setMode("camera")}
-          className="bg-green-500 px-6 py-3 rounded-xl">
+          className="bg-green-500 hover:bg-green-600 py-3 rounded-xl font-semibold transition">
             Capture From Laptop Camera
           </button>
 
           <button
           onClick={()=>setMode("phone")}
-          className="bg-purple-500 px-6 py-3 rounded-xl">
+          className="bg-purple-500 hover:bg-purple-600 py-3 rounded-xl font-semibold transition">
             Capture From Phone (QR)
           </button>
+
+        </div>
+
+
+        {/* FEATURES */}
+
+        <div className="grid grid-cols-3 gap-8 mt-14 text-center">
+
+          <div>
+            <div className="text-3xl">⚡</div>
+            <p className="text-sm text-gray-400 mt-2">
+              Fast AI Processing
+            </p>
+          </div>
+
+          <div>
+            <div className="text-3xl">🔒</div>
+            <p className="text-sm text-gray-400 mt-2">
+              Privacy Friendly
+            </p>
+          </div>
+
+          <div>
+            <div className="text-3xl">📷</div>
+            <p className="text-sm text-gray-400 mt-2">
+              Upload or Camera
+            </p>
+          </div>
+
+        </div>
+
+
+        {/* INSTRUCTIONS */}
+
+        <div className="mt-16 text-gray-500 text-sm text-center max-w-lg">
+
+          <p>
+          1. Upload or capture a hazy image
+          </p>
+
+          <p>
+          2. Our AI enhances contrast and removes haze
+          </p>
+
+          <p>
+          3. View before & after comparison instantly
+          </p>
 
         </div>
 
@@ -92,47 +145,53 @@ export default function Home() {
 
 
 
-  /* UPLOAD MODE */
+  /* ---------------- UPLOAD MODE ---------------- */
 
   if(mode === "upload"){
+
     return(
+
       <div className="min-h-screen bg-gray-900 text-white p-10">
 
         <button
         onClick={()=>setMode("home")}
-        className="mb-6 bg-gray-700 px-4 py-2 rounded">
+        className="mb-8 bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600">
           Back
         </button>
 
         <UploadBox/>
 
       </div>
+
     )
   }
 
 
 
-  /* LAPTOP CAMERA */
+  /* ---------------- LAPTOP CAMERA MODE ---------------- */
 
   if(mode === "camera"){
+
     return(
+
       <div className="min-h-screen bg-gray-900 text-white p-10">
 
         <button
         onClick={()=>setMode("home")}
-        className="mb-6 bg-gray-700 px-4 py-2 rounded">
+        className="mb-8 bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600">
           Back
         </button>
 
         <CameraCapture/>
 
       </div>
+
     )
   }
 
 
 
-  /* PHONE QR MODE */
+  /* ---------------- PHONE QR MODE ---------------- */
 
   if(mode === "phone"){
 
@@ -142,7 +201,7 @@ export default function Home() {
 
         <button
         onClick={()=>setMode("home")}
-        className="self-start bg-gray-700 px-4 py-2 rounded mb-6">
+        className="self-start mb-6 bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600">
           Back
         </button>
 
@@ -150,7 +209,14 @@ export default function Home() {
           Capture Using Phone
         </h1>
 
+        <p className="text-gray-400 mb-6 text-center">
+          Scan the QR code using your phone camera
+          and capture an image.
+        </p>
+
         <QRScanner/>
+
+        {/* RESULT VIEW */}
 
         <div className="grid md:grid-cols-2 gap-10 w-full max-w-5xl mt-10">
 
@@ -161,7 +227,9 @@ export default function Home() {
             {original ? (
               <img src={original} className="rounded-lg w-full"/>
             ) : (
-              <p className="text-gray-500">Waiting for image...</p>
+              <p className="text-gray-500">
+                Waiting for image...
+              </p>
             )}
 
           </div>
@@ -173,7 +241,9 @@ export default function Home() {
             {enhanced ? (
               <img src={enhanced} className="rounded-lg w-full"/>
             ) : (
-              <p className="text-gray-500">Processing...</p>
+              <p className="text-gray-500">
+                Processing...
+              </p>
             )}
 
           </div>

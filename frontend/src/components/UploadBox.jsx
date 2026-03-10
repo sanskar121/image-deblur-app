@@ -1,58 +1,81 @@
 import { useState } from "react"
 import axios from "axios"
 
-export default function UploadBox({setOriginal,setResult,setLoading}){
+export default function UploadBox() {
 
-const uploadImage = async(e)=>{
+  const [original, setOriginal] = useState(null)
+  const [enhanced, setEnhanced] = useState(null)
+  const [loading, setLoading] = useState(false)
 
-const file = e.target.files[0]
+  const handleUpload = async (e) => {
 
-setOriginal(URL.createObjectURL(file))
+    const file = e.target.files[0]
+    if(!file) return
 
-const formData = new FormData()
-formData.append("file",file)
+    setOriginal(URL.createObjectURL(file))
 
-setLoading(true)
+    const formData = new FormData()
+    formData.append("file", file)
 
-const res = await axios.post(
-"https://image-deblur-app.onrender.com/process",
-formData
-)
+    setLoading(true)
 
-setResult(res.data.image)
-setLoading(false)
+    const res = await axios.post(
+      "https://image-deblur-app.onrender.com/process",
+      formData,
+      { responseType: "blob" }
+    )
 
-}
+    const imageURL = URL.createObjectURL(res.data)
+    setEnhanced(imageURL)
 
-return(
+    setLoading(false)
 
-<div className="flex flex-col items-center text-center">
+  }
 
-  <div className="border-2 border-dashed border-gray-600 hover:border-blue-500 transition-all p-14 rounded-2xl w-full max-w-xl cursor-pointer">
+  return (
 
-    <input
-      type="file"
-      accept="image/*"
-      onChange={uploadImage}
-      className="mb-4"
-    />
+    <div className="flex flex-col items-center gap-6">
 
-    <div className="text-4xl mb-3">
-      ☁️
+      <div className="border-2 border-dashed border-gray-600 rounded-xl p-10 text-center w-[400px]">
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleUpload}
+        />
+
+        <p className="text-gray-400 mt-4">
+          Upload your hazy image
+        </p>
+
+      </div>
+
+      <div className="grid grid-cols-2 gap-6">
+
+        <div className="bg-gray-800 p-4 rounded-xl">
+
+          <h3 className="mb-3">Original</h3>
+
+          {original && (
+            <img src={original} className="rounded-lg"/>
+          )}
+
+        </div>
+
+        <div className="bg-gray-800 p-4 rounded-xl">
+
+          <h3 className="mb-3">Enhanced</h3>
+
+          {loading && <p>Processing...</p>}
+
+          {enhanced && (
+            <img src={enhanced} className="rounded-lg"/>
+          )}
+
+        </div>
+
+      </div>
+
     </div>
-
-    <p className="text-lg font-semibold">
-      Upload your image
-    </p>
-
-    <p className="text-gray-400 text-sm mt-2">
-      Drag & drop or click to browse
-    </p>
-
-  </div>
-
-</div>
-
-)
-
+  )
 }

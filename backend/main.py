@@ -21,18 +21,13 @@ app.add_middleware(
 
 @app.post("/process")
 async def process_image(file: UploadFile = File(...)):
-    global latest_original, latest_result
 
     contents = await file.read()
 
-    # Decode image
     npimg = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
 
-    latest_original = contents
-
-    # ----- IMAGE ENHANCEMENT -----
-
+    # CLAHE contrast enhancement
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
 
@@ -45,12 +40,13 @@ async def process_image(file: UploadFile = File(...)):
     gaussian = cv2.GaussianBlur(contrast_img,(9,9),10)
     sharpened = cv2.addWeighted(contrast_img,1.5,gaussian,-0.5,0)
 
-    # Encode result
+    # Encode image
     _, buffer = cv2.imencode(".jpg", sharpened)
 
-    latest_result = buffer.tobytes()
-
-    return {"status": "processed"}
+    return Response(
+        content=buffer.tobytes(),
+        media_type="image/jpeg"
+    )
 
 
 @app.get("/latest")
